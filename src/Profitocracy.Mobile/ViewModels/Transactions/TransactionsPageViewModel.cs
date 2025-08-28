@@ -18,6 +18,7 @@ public class TransactionsPageViewModel : BaseNotifyObject
 
     private Guid? _profileId;
     private bool _isTransactionsListEmpty;
+    private bool _isMultiSelection;
 
     public TransactionsPageViewModel(
         IProfileRepository profileRepository,
@@ -35,6 +36,12 @@ public class TransactionsPageViewModel : BaseNotifyObject
     {
         get => _isTransactionsListEmpty;
         set => SetProperty(ref _isTransactionsListEmpty, value);
+    }
+
+    public bool IsMultiSelection
+    {
+        get => _isMultiSelection;
+        set => SetProperty(ref _isMultiSelection, value);
     }
 
     public async Task Initialize(TransactionsFiltersPageViewModel filters)

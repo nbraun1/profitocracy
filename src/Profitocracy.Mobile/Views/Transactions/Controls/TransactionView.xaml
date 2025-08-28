@@ -4,11 +4,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:Profitocracy.Mobile.Models.Transactions"
              x:Class="Profitocracy.Mobile.Views.Transactions.Controls.TransactionView"
-             x:DataType="models:TransactionModel">
+             x:DataType="models:TransactionModel"
+             x:Name="ThisView">
     <Border Style="{StaticResource TransactionCard}">
         <StackLayout>
-            <FlexLayout JustifyContent="SpaceBetween">
-                <StackLayout>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackLayout Grid.Column="0" VerticalOptions="Center">
+                    <Border StrokeShape="RoundRectangle 12"
+                            Stroke="Gray"
+                            WidthRequest="24"
+                            HeightRequest="24"
+                            Padding="0"
+                            VerticalOptions="Center"
+                            IsVisible="{Binding Source={x:Reference ThisView}, Path=IsMultiSelection}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding IsSelected}"
+                                         Value="true">
+                                <Setter Property="BackgroundColor"
+                                        Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding IsSelected}"
+                                         Value="false">
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </StackLayout>
+                <StackLayout Grid.Column="1">
                     <Label Text="{Binding DisplaySpendingType}">
                         <Label.Style>
                             <Style TargetType="Label">
@@ -38,7 +62,7 @@
                            Margin="0,4,0,0"
                            Text="{Binding Description}"/>
                 </StackLayout>
-                <StackLayout>
+                <StackLayout Grid.Column="2">
                     <Label HorizontalTextAlignment="End"
                            Text="{Binding DisplayAmount}">
                         <Label.Style>
@@ -83,7 +107,7 @@
                                Text="&#xf201;" />
                     </HorizontalStackLayout>
                 </StackLayout>
-            </FlexLayout>
+            </Grid>
         </StackLayout>
     </Border>
 </ContentView>

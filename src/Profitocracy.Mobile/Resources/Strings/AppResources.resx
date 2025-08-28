@@ -949,4 +949,10 @@
   <data name="EditProfile_CurrencyAndBalanceCannotBeChanged" xml:space="preserve">
       <value>The profile's currency and balance cannot be changed after creation. To make changes, please create a new profile instead.</value>
   </data>
+  <data name="Transactions_Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Transactions_Deselect" xml:space="preserve">
+    <value>Deselect</value>
+  </data>
 </root>

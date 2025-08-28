@@ -15,6 +15,7 @@
     <!-- Colors for light theme -->
     <Color x:Key="SecondaryLight">#93BC8E</Color>
     <Color x:Key="LightContent">#FFFFFF</Color>
+    <Color x:Key="LightSelectedContent">#D9EFFF</Color>
     <Color x:Key="LightBackground">#EEEEEE</Color>
     
     <Color x:Key="LightMenuContent">#3F3F3F</Color>
@@ -26,6 +27,7 @@
     <!-- Colors for dark theme -->
     <Color x:Key="SecondaryDark">#598254</Color>
     <Color x:Key="DarkContent">#444444</Color>
+    <Color x:Key="DarkSelectedContent">#1E3A5F</Color>
     <Color x:Key="DarkBackground">#303030</Color>
     
     <Color x:Key="DarkMenuContent">#CDCDCD</Color>

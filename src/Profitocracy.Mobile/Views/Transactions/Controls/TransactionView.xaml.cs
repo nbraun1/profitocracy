@@ -13,6 +13,12 @@ public partial class TransactionView : ContentView
         nameof(Transaction),
         typeof(TransactionModel),
         typeof(TransactionView));
+    
+    public static readonly BindableProperty IsMultiSelectionProperty = BindableProperty.Create(
+        nameof(IsMultiSelection),
+        typeof(bool),
+        typeof(bool),
+        false);
 
     public TransactionModel Transaction
     {
@@ -22,5 +28,11 @@ public partial class TransactionView : ContentView
             SetValue(TransactionProperty, value);
             BindingContext = Transaction;
         }
+    }
+    
+    public bool IsMultiSelection
+    {
+        get => (bool)GetValue(IsMultiSelectionProperty);
+        set => SetValue(IsMultiSelectionProperty, value);
     }
 }

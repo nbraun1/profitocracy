@@ -1,10 +1,11 @@
 using Profitocracy.Core.Domain.Model.Transactions;
+using Profitocracy.Mobile.Abstractions;
 using Profitocracy.Mobile.Resources.Strings;
 using System.Globalization;
 
 namespace Profitocracy.Mobile.Models.Transactions;
 
-public class TransactionModel
+public class TransactionModel : BaseNotifyObject
 {
     private static readonly string[] SpendingTypes =
     [
@@ -13,6 +14,8 @@ public class TransactionModel
         AppResources.Transactions_Saved,
         AppResources.Transactions_Income,
     ];
+    
+    private bool _isSelected;
 
     public Guid? Id { get; set; }
     public bool IsMultiCurrency { get; set; }
@@ -74,6 +77,12 @@ public class TransactionModel
 
     public bool IsRecurring => Interval is not null && Interval.Value > 0;
     public string? DisplayInterval => Interval?.Name;
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set => SetProperty(ref _isSelected, value);
+    }
 
     public static TransactionModel FromDomain(Transaction transaction)
     {

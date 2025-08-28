@@ -161,6 +161,49 @@ public partial class TransactionsPage : BaseContentPage
                 TransactionsCollectionView.SelectedItems = null;
                 await EditTransaction(transactionModel);
             }
+            else if (TransactionsCollectionView.SelectionMode == SelectionMode.Multiple)
+            {
+                var newlySelected = e.CurrentSelection
+                    .Except(e.PreviousSelection)
+                    .OfType<TransactionModel>();
+                var deselected = e.PreviousSelection
+                    .Except(e.CurrentSelection)
+                    .OfType<TransactionModel>();
+
+                foreach (var item in newlySelected)
+                {
+                    item.IsSelected = true;
+                }
+
+                foreach (var item in deselected)
+                {
+                    item.IsSelected = false;
+                }
+            }
         });
+    }
+    
+    private void TransactionSelect_OnClicked(object? sender, EventArgs e)
+    {
+        ProcessAction(async () => await MainThread.InvokeOnMainThreadAsync(() =>
+        {
+            TransactionsCollectionView.SelectedItem = null;
+            TransactionsCollectionView.SelectedItems = null;
+
+            if (TransactionsCollectionView.SelectionMode == SelectionMode.Single)
+            {
+                TransactionsSelectToolbarItem.Text = AppResources.Transactions_Deselect;
+                TransactionsFiltersToolbarItem.IsEnabled = false;
+                TransactionsCollectionView.SelectionMode = SelectionMode.Multiple;
+                _viewModel.IsMultiSelection = true;
+            }
+            else if (TransactionsCollectionView.SelectionMode == SelectionMode.Multiple)
+            {
+                TransactionsSelectToolbarItem.Text = AppResources.Transactions_Select;
+                TransactionsFiltersToolbarItem.IsEnabled = true;
+                TransactionsCollectionView.SelectionMode = SelectionMode.Single;
+                _viewModel.IsMultiSelection = false;
+            }
+        }));
     }
 }
