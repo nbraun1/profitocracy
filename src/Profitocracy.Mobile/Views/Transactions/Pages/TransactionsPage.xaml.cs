@@ -21,6 +21,41 @@ public partial class TransactionsPage : BaseContentPage
         BindingContext = _viewModel = viewModel;
         TransactionsCollectionView.ItemsSource = _viewModel.Transactions;
     }
+    
+    private async Task EditTransaction(TransactionModel? transaction)
+    {
+        if (transaction?.Id is null)
+        {
+            throw new ArgumentNullException(AppResources.CommonError_FindTransactionToEdit);
+        }
+
+        var isTransactionInPeriod = await _viewModel.IsTransactionInProfilePeriod((Guid)transaction.Id);
+        var isEdit = true;
+
+        if (!isTransactionInPeriod)
+        {
+            isEdit = await DisplayAlert(
+                AppResources.Transactions_EditNotInPeriodAlert_Title,
+                string.Format(AppResources.Transactions_EditNotInPeriodAlert_Description, transaction.Description),
+                AppResources.Transactions_EditNotInPeriodAlert_Ok,
+                AppResources.Transactions_EditNotInPeriodAlert_Cancel);
+        }
+
+        if (!isEdit)
+        {
+            return;
+        }
+
+        var editPage = Handler?.MauiContext?.Services.GetService<EditTransactionPage>();
+
+        if (editPage is null)
+        {
+            throw new ArgumentNullException(AppResources.CommonError_OpenEditTransactionPage);
+        }
+
+        editPage.AddTransactionId((Guid)transaction.Id);
+        await Navigation.PushModalAsync(editPage);
+    }
 
     private void TransactionsPage_NavigatedTo(object? sender, EventArgs e)
     {
@@ -88,39 +123,7 @@ public partial class TransactionsPage : BaseContentPage
                 throw new InvalidCastException(AppResources.CommonError_InternalErrorTryAgain);
             }
 
-            var transaction = swipeItem.BindingContext as TransactionModel;
-
-            if (transaction?.Id is null)
-            {
-                throw new ArgumentNullException(AppResources.CommonError_FindTransactionToEdit);
-            }
-
-            var isTransactionInPeriod = await _viewModel.IsTransactionInProfilePeriod((Guid)transaction.Id);
-            var isEdit = true;
-
-            if (!isTransactionInPeriod)
-            {
-                isEdit = await DisplayAlert(
-                    AppResources.Transactions_EditNotInPeriodAlert_Title,
-                    string.Format(AppResources.Transactions_EditNotInPeriodAlert_Description, transaction.Description),
-                    AppResources.Transactions_EditNotInPeriodAlert_Ok,
-                    AppResources.Transactions_EditNotInPeriodAlert_Cancel);
-            }
-
-            if (!isEdit)
-            {
-                return;
-            }
-
-            var editPage = Handler?.MauiContext?.Services.GetService<EditTransactionPage>();
-
-            if (editPage is null)
-            {
-                throw new ArgumentNullException(AppResources.CommonError_OpenEditTransactionPage);
-            }
-
-            editPage.AddTransactionId((Guid)transaction.Id);
-            await Navigation.PushModalAsync(editPage);
+            await EditTransaction(swipeItem.BindingContext as TransactionModel);
         });
     }
 
@@ -135,6 +138,29 @@ public partial class TransactionsPage : BaseContentPage
             _filtersViewModel.CopyFrom(_lastAppliedFiltersViewModel);
             var filtersPage = new TransactionsFiltersPage(_filtersViewModel);
             await Navigation.PushModalAsync(filtersPage);
+        });
+    }
+
+    private void TransactionsCollectionView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        ProcessAction(async () =>
+        {
+            if (TransactionsCollectionView.SelectionMode == SelectionMode.Single)
+            {
+                if (!e.CurrentSelection.Any())
+                {
+                    return;
+                }
+
+                if (e.CurrentSelection.FirstOrDefault() is not TransactionModel transactionModel)
+                {
+                    throw new InvalidCastException(AppResources.CommonError_InternalErrorTryAgain);
+                }
+
+                TransactionsCollectionView.SelectedItem = null;
+                TransactionsCollectionView.SelectedItems = null;
+                await EditTransaction(transactionModel);
+            }
         });
     }
 }

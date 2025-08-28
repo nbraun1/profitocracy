@@ -27,7 +27,9 @@
                Padding="16, 0"/>
         
         <CollectionView x:Name="TransactionsCollectionView"
-                        VerticalScrollBarVisibility="Default">
+                        VerticalScrollBarVisibility="Default"
+                        SelectionMode="Single"
+                        SelectionChanged="TransactionsCollectionView_OnSelectionChanged">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="transactions:TransactionModel">
                     <SwipeView>
